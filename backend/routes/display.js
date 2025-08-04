@@ -42,5 +42,14 @@ router.get("/users", async (req, res) => {
     res.status(500).json({ error: "server_error" });
   }
 });
+router.get("/load-history", async (req, res) => {
+  try {
+    const [rows] = await db.query("SELECT * FROM creditLoadHistory ORDER BY id DESC");
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "server_error" });
+  }
+});
 
 module.exports = router;

@@ -38,13 +38,8 @@ export default function Sidebar() {
           />
           <SidebarItem
             icon={<Wallet size={18} />}
-            label="Load Credits"
-            href="/load-credits"
-          />
-          <SidebarItem
-            icon={<BarChart2 size={18} />}
-            label="Check Balance"
-            href="/check-balance"
+            label="Users Credit"
+            href="/users-credit"
           />
           <SidebarItem
             icon={<CreditCard size={18} />}
@@ -63,8 +58,8 @@ export default function Sidebar() {
           />
           <SidebarItem
             icon={<ClipboardList size={18} />}
-            label="Logs"
-            href="#"
+            label="Locker Logs"
+            href="locker-logs"
           />
         </ul>
       </div>

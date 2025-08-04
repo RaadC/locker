@@ -23,33 +23,29 @@ export default function ControlLockerPage() {
         setError("Failed to load lockers.");
       }
     };
-
     fetchUsedLocker();
     const interval = setInterval(fetchUsedLocker, 5000); // auto-refresh
     return () => clearInterval(interval);
   }, []);
 
-  const formatDate = (dateStr) => {
-    const date = new Date(dateStr);
-    return date.toLocaleString("en-PH", {
-      dateStyle: "medium",
-      timeStyle: "short",
-    });
-  };
   const handleDeactivate = async (id) => {
     if (!confirm(`Are you sure you  want to open locker #${id}?`)) return;
-
     try {
       const res = await axios.put(
         `http://localhost:5000/api/deactivate-locker/${id}`
       );
       setMessage(res.data.message);
-
-      // Optional: re-fetch the list or remove it from local state
       setData((prev) => prev.filter((row) => row.id !== id));
     } catch (err) {
       setMessage("Failed to deactivate locker.");
     }
+  };
+    const formatDate = (dateStr) => {
+    const date = new Date(dateStr);
+    return date.toLocaleString("en-PH", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    });
   };
 
   return (
@@ -57,10 +53,8 @@ export default function ControlLockerPage() {
       <div className="fixed top-0 left-0 right-0 z-50">
         <TopBar onLogoClick={toggleSidebar} />
       </div>
-
       <div className="flex flex-1 pt-16 overflow-hidden">
         <Sidebar isOpen={sidebarOpen} />
-
         <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
           <div className="w-full max-w-4xl mx-auto bg-white p-6 shadow rounded-xl">
             <h1 className="text-2xl font-bold mb-4">Helmet Locker in use</h1>
@@ -110,12 +104,10 @@ export default function ControlLockerPage() {
               </table>
             </div>
           </div>
-
           <div className="fixed bottom-4 right-4 group z-50">
             <div className="bg-white text-blue-600 rounded-full w-12 h-12 flex items-center justify-center cursor-pointer shadow-lg hover:bg-gray-100 transition duration-200">
               <HelpCircle className="w-6 h-6" />
             </div>
-
             <div className="absolute bottom-14 right-0 w-72 text-sm text-white bg-gray-900 p-3 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none shadow-lg">
               This page shows the locker in use. This page will allow you to
               forcely unlock the locker in use when QR code of user is not

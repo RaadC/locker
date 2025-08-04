@@ -9,9 +9,9 @@ import { HelpCircle } from "lucide-react";
 export default function UpdateChargePage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [currentCharge, setCurrentCharge] = useState("");
-  const [message, setMessage] = useState("");
-  const [isSuccess, setIsSuccess] = useState(null); // true / false / null
   const [currentValue, setCurrentValue] = useState(null);
+  const [message, setMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(null); 
 
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
@@ -27,7 +27,6 @@ export default function UpdateChargePage() {
         setIsSuccess(false);
       });
   }, []);
-
   useEffect(() => {
     if (message) {
       const timer = setTimeout(() => {
@@ -41,7 +40,6 @@ export default function UpdateChargePage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const number = Number(currentCharge);
-
     if (number < 0) {
       setMessage("Charge value cannot be negative.");
       setIsSuccess(false);
@@ -52,7 +50,6 @@ export default function UpdateChargePage() {
       setIsSuccess(false);
       return;
     }
-
     try {
       await axios.put("http://localhost:5000/api/settings", {
         currentCharge: number,
@@ -65,14 +62,12 @@ export default function UpdateChargePage() {
       setIsSuccess(false);
     }
   };
-
   const handleFreeClick = async () => {
     if (currentValue === 0) {
       setMessage("Charge is already set to FREE (₱0).");
       setIsSuccess(false);
       return;
     }
-
     try {
       await axios.put("http://localhost:5000/api/settings", {
         currentCharge: 0,
@@ -92,16 +87,13 @@ export default function UpdateChargePage() {
       <div className="fixed top-0 left-0 right-0 z-50">
         <TopBar onLogoClick={toggleSidebar} />
       </div>
-
       <div className="flex flex-1 pt-16 overflow-hidden">
         <Sidebar isOpen={sidebarOpen} />
-
-        <main className="flex-1 flex justify-center items-center bg-gray-50">
+        <main className="flex-1 flex justify-center items-start p-6 bg-gray-50">
           <div className="w-full max-w-md bg-white p-6 rounded-xl shadow-md space-y-6">
             <h1 className="text-xl font-semibold text-center">
               Adjust Charge Fee
             </h1>
-
             <p className="text-sm text-center text-gray-600">
               Current Charge: <strong>₱{currentValue}</strong>
             </p>
@@ -145,7 +137,6 @@ export default function UpdateChargePage() {
             <div className="bg-white text-blue-600 rounded-full w-12 h-12 flex items-center justify-center cursor-pointer shadow-lg hover:bg-gray-100 transition duration-200">
               <HelpCircle className="w-6 h-6" />
             </div>
-
             <div className="absolute bottom-14 right-0 w-72 text-sm text-white bg-gray-900 p-3 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-50 shadow-lg">
               "Update" to save changes in fee and "Free" to set fee to 0
             </div>

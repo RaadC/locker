@@ -1,31 +1,29 @@
 "use client";
 import { useEffect, useState } from "react";
 import axios from "axios";
-
 import TopBar from "@/components/TopBar";
 import Sidebar from "@/components/Sidebar";
-import { HelpCircle, Trash2 } from "lucide-react";
+import { HelpCircle } from "lucide-react";
 
-export default function RegisterUserPage() {
+export default function UserCreditsPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [tupcID, setTupcID] = useState("");
-  const [balance, setBalance] = useState("");
-  const [users, setUsers] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [amount, setAmount] = useState("");
+  const [history, setHistory] = useState([]);
   const [message, setMessage] = useState("");
 
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
   useEffect(() => {
-    const fetchUsers = () => {
+    const fetchHistory = () => {
       axios
-        .get("http://localhost:5000/api/users")
-        .then((res) => setUsers(res.data))
-        .catch((err) => console.error("Failed to fetch active lockers", err));
+        .get("http://localhost:5000/api/load-history")
+        .then((res) => setHistory(res.data))
+        .catch((err) => console.error("Failed to fetch load history", err));
     };
 
-    fetchUsers();
-    const interval = setInterval(fetchUsers, 5000);
+    fetchHistory();
+    const interval = setInterval(fetchHistory, 5000);
     return () => clearInterval(interval);
   }, []);
   useEffect(() => {
@@ -37,44 +35,34 @@ export default function RegisterUserPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!tupcID || isNaN(balance)) {
-      setMessage("Invalid input");
+    if (!tupcID || isNaN(amount)) {
+      setMessage("Please enter valid values.");
       return;
     }
-    if (balance < 0) {
-      setMessage("Initial value cannot be negative.");
-      return;
-    }
+
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/insert-user",
+      const response = await axios.put(
+        "http://localhost:5000/api/add-credits",
         {
           tupcID,
-          balance: parseFloat(balance),
+          amount: parseFloat(amount),
         }
       );
-      setMessage(response.data.message || "User inserted successfully");
+
+      setMessage(response.data.message || "Balance updated successfully");
       setTupcID("");
-      setBalance("");
+      setAmount("");
     } catch (error) {
-      setMessage("User ID already registered");
+      setMessage("User ID to update does not exists");
     }
   };
-
-  const handleDelete = async (tupcID) => {
-    if (!confirm(`Are you sure you want to delete user ${tupcID}?`)) return;
-
-    try {
-      await axios.delete(`http://localhost:5000/api/delete-user/${tupcID}`);
-      setUsers((prev) => prev.filter((user) => user.tupcID !== tupcID));
-      setMessage(`User ${tupcID} deleted successfully.`);
-    } catch (error) {
-      setMessage(`Failed to delete user ${tupcID}.`);
-    }
+  const formatDate = (dateStr) => {
+    const date = new Date(dateStr);
+    return date.toLocaleString("en-PH", {
+      dateStyle: "medium",
+      timeStyle: "short",
+    });
   };
-  const filteredUsers = users.filter((user) =>
-    user.tupcID.toLowerCase().includes(searchTerm.toLowerCase())
-  );
 
   return (
     <div className="h-screen flex flex-col">
@@ -86,11 +74,13 @@ export default function RegisterUserPage() {
         <div className="flex flex-1 flex-col lg:flex-row gap-6 overflow-y-auto p-6 bg-gray-50">
           <div className="w-full lg:w-1/2">
             <div className="bg-white shadow rounded-xl p-6 space-y-6">
-              <h1 className="text-2xl font-bold mb-4">Register New User</h1>
+              <h1 className="text-2xl font-bold text-center">
+                Add Users Credit
+              </h1>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <input
                   type="text"
-                  placeholder="TUPC ID"
+                  placeholder="User TUPC ID"
                   value={tupcID}
                   onChange={(e) => setTupcID(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
@@ -98,9 +88,9 @@ export default function RegisterUserPage() {
                 />
                 <input
                   type="number"
-                  placeholder="Balance"
-                  value={balance}
-                  onChange={(e) => setBalance(e.target.value)}
+                  placeholder="Amount to Add"
+                  value={amount}
+                  onChange={(e) => setAmount(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                   required
                 />
@@ -108,7 +98,7 @@ export default function RegisterUserPage() {
                   type="submit"
                   className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
                 >
-                  Register
+                  Add Credits
                 </button>
               </form>
 
@@ -128,47 +118,37 @@ export default function RegisterUserPage() {
 
           <div className="w-full lg:w-1/2">
             <div className="bg-white shadow rounded-xl p-6 space-y-7">
-              <h2 className="text-xl font-semibold">All registered users</h2>
-              <div className="flex justify-end mb-3">
-                <input
-                  type="text"
-                  placeholder="Search User ID..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="border border-gray-300 rounded-md px-3 py-1 text-sm focus:ring-blue-500 focus:border-blue-500"
-                />
-              </div>
-
-              {filteredUsers.length > 0 ? (
+              <h2 className="text-xl font-semibold">Credit Load History</h2>
+              {history.length > 0 ? (
                 <div className="overflow-x-auto">
                   <table className="min-w-full text-sm text-center">
                     <thead className="bg-blue-100">
                       <tr>
                         <th className="px-4 py-2 font-semibold text-gray-700">
+                          Transac. ID
+                        </th>
+                        <th className="px-4 py-2 font-semibold text-gray-700">
                           User ID
                         </th>
                         <th className="px-4 py-2 font-semibold text-gray-700">
-                          Balance
+                          Added Amount
                         </th>
-                        <th className="px-4 py-2 font-semibold text-gray-700"></th>
+                        <th className="px-4 py-2 font-semibold text-gray-700">
+                          Time Updated
+                        </th>
                       </tr>
                     </thead>
                     <tbody>
-                      {filteredUsers.map((user) => (
+                      {history.map((entry) => (
                         <tr
-                          key={user.tupcID}
+                          key={entry.id}
                           className="bg-white hover:bg-gray-50 shadow-sm border-b border-gray-200"
                         >
-                          <td className="px-4 py-2">{user.tupcID}</td>
-                          <td className="px-4 py-2">₱{user.balance}</td>
+                          <td className="px-4 py-2">{entry.id}</td>
+                          <td className="px-4 py-2">{entry.tupcID}</td>
+                          <td className="px-4 py-2">{entry.addedAmount}</td>
                           <td className="px-4 py-2">
-                            <button
-                              onClick={() => handleDelete(user.tupcID)}
-                              className="text-red-600 hover:text-red-800 transition duration-150"
-                              title="Delete user"
-                            >
-                              <Trash2 className="w-5 h-5 inline" />
-                            </button>
+                            {formatDate(entry.dateTime)}
                           </td>
                         </tr>
                       ))}
@@ -177,7 +157,7 @@ export default function RegisterUserPage() {
                 </div>
               ) : (
                 <p className="text-sm text-gray-500">
-                  No matching users found.
+                  No active lockers found.
                 </p>
               )}
             </div>
@@ -187,6 +167,7 @@ export default function RegisterUserPage() {
             <div className="bg-white text-blue-600 rounded-full w-12 h-12 flex items-center justify-center cursor-pointer shadow-lg hover:bg-gray-100 transition duration-200">
               <HelpCircle className="w-6 h-6" />
             </div>
+
             <div className="absolute bottom-14 right-0 w-72 text-sm text-white bg-gray-900 p-3 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-50 shadow-lg">
               To "Register" user enter TUPC ID and initial balance. This page
               also shows all users

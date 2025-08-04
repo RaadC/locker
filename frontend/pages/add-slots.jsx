@@ -9,9 +9,9 @@ import { HelpCircle } from "lucide-react";
 export default function UpdateTotalLockerPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [totalLocker, setTotalLocker] = useState("");
-  const [message, setMessage] = useState("");
   const [currentValue, setCurrentValue] = useState(null);
   const [activeLockers, setActiveLockers] = useState([]);
+  const [message, setMessage] = useState("");
 
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
@@ -55,26 +55,21 @@ export default function UpdateTotalLockerPage() {
       (max, locker) => Math.max(max, locker.id),
       0
     );
-
     if (number < 1) {
       setMessage("Value must be at least 10");
       return;
     }
-
     if (number < maxUsedId) {
       setMessage(
         `Value cannot be less than highest used locker slot ${maxUsedId}`
       );
       return;
     }
-
     try {
       const res = await axios.put("http://localhost:5000/api/settings", {
         totalLocker: number,
       });
-
       const { message, updated } = res.data;
-
       setMessage(message);
       if (updated) {
         setCurrentValue(number);
@@ -89,19 +84,15 @@ export default function UpdateTotalLockerPage() {
       <div className="fixed top-0 left-0 right-0 z-50">
         <TopBar onLogoClick={toggleSidebar} />
       </div>
-
       <div className="flex flex-1 pt-16 overflow-hidden">
         <Sidebar isOpen={sidebarOpen} />
-
         <div className="flex flex-1 flex-col lg:flex-row gap-6 overflow-y-auto p-6 bg-gray-50">
           <div className="w-full lg:w-1/2">
             <div className="bg-white shadow rounded-xl p-6 space-y-6">
               <h1 className="text-xl font-semibold">Adjust Total Slots</h1>
-
               <p className="text-sm text-gray-600">
                 Total Locker Slots: <strong>{currentValue}</strong>
               </p>
-
               <form onSubmit={handleSubmit} className="space-y-4">
                 <input
                   id="totalLocker"
@@ -175,7 +166,6 @@ export default function UpdateTotalLockerPage() {
             <div className="bg-white text-blue-600 rounded-full w-12 h-12 flex items-center justify-center cursor-pointer shadow-lg hover:bg-gray-100 transition duration-200">
               <HelpCircle className="w-6 h-6" />
             </div>
-
             <div className="absolute bottom-14 right-0 w-72 text-sm text-white bg-gray-900 p-3 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-50 shadow-lg">
               "Update" to adjust total locker slot. Value must not be less than
               10 or less than locker slots in use. This page also shows
