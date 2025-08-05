@@ -169,8 +169,8 @@ export default function UserCreditsPage() {
             </div>
 
             <div className="absolute bottom-14 right-0 w-72 text-sm text-white bg-gray-900 p-3 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-50 shadow-lg">
-              To "Register" user enter TUPC ID and initial balance. This page
-              also shows all users
+              To "Add balance" enter TUPC ID and amount to be added. This page
+              also shows balance update transactions.
             </div>
           </div>
         </div>

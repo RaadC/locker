@@ -20,10 +20,17 @@ users | CREATE TABLE `users` (
 currentCharge | CREATE TABLE `currentcharge` (
   `fee` decimal(10,2) DEFAULT NULL
 
- lockerHistory | CREATE TABLE `lockerhistory` (
+lockerHistory | CREATE TABLE `lockerhistory` (
   `id` int NOT NULL AUTO_INCREMENT,
   `tupcID` varchar(50) NOT NULL,
   `slotNumber` int NOT NULL,
   `action` varchar(20) NOT NULL,
+  `dateTime` datetime DEFAULT CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`)
+
+creditloadhistory | CREATE TABLE `creditloadhistory` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `tupcID` char(20) NOT NULL,
+  `addedAmount` decimal(10,2) NOT NULL,
   `dateTime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
