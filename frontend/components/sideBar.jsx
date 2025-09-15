@@ -1,9 +1,9 @@
 "use client";
 import { useState } from "react";
 import {
+  LayoutDashboard,
   UserPlus,
   Wallet,
-  BarChart2,
   CreditCard,
   Settings,
   PlusSquare,
@@ -17,20 +17,27 @@ export default function Sidebar() {
   return (
     <>
       <button
-        className="md:hidden fixed top-18 left-4 z-50 bg-transparent text-gray-700 p-2"
+        className="md:hidden fixed top-18 left-4 z-50 bg-transparent p-2"
         onClick={() => setOpen(!open)}
       >
-        <ArrowLeftFromLine size={28} />
+        <ArrowLeftFromLine
+          size={28}
+          className={open ? "text-gray-50" : "text-blue-950"}
+        />
       </button>
       <div
         className={`
-          fixed top-16 left-0 h-full w-64 bg-white shadow-md z-40 p-4 transform transition-transform duration-300
-          ${
-            open ? "translate-x-0" : "-translate-x-full"
-          } md:translate-x-0 md:relative md:block
+          fixed top-16 left-0 h-full w-64 bg-blue-950 shadow-md z-40 p-4 transform transition-transform duration-300
+          ${open ? "translate-x-0" : "-translate-x-full"}
+          md:translate-x-0 md:relative md:block
         `}
       >
-        <ul className="pt-15 space-y-7">
+        <ul className="pt-20 space-y-7">
+          <SidebarItem
+            icon={<LayoutDashboard size={18} />}
+            label="Dashboard"
+            href="/dashboard"
+          />
           <SidebarItem
             icon={<UserPlus size={18} />}
             label="Register"
@@ -59,7 +66,7 @@ export default function Sidebar() {
           <SidebarItem
             icon={<ClipboardList size={18} />}
             label="Locker Logs"
-            href="locker-logs"
+            href="/locker-logs"
           />
         </ul>
       </div>
@@ -72,7 +79,7 @@ function SidebarItem({ icon, label, href }) {
     <li>
       <a
         href={href}
-        className="flex items-center gap-3 text-gray-700 hover:text-red-600 transition-colors"
+        className="flex items-center gap-3 text-gray-50 hover:text-red-400 transition-colors"
       >
         {icon}
         <span>{label}</span>

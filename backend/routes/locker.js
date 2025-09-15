@@ -5,14 +5,23 @@ const store = require("../store");
 
 // POST: /api/text-input
 router.post("/text-input", async (req, res) => {
-  const { textInput } = req.body;
+  let { textInput } = req.body;
   if (!textInput) return res.status(400).json({ error: "no_input_provided" });
 
   store.lastTextInput = textInput;
-  //check if registered
+
+  //Extract just the ID part (TUPC-XX-XXXX)
+  const match = textInput.match(/TUPC-\d{2}-\d{4}/i);
+  if (!match) {
+    store.lockerToOpen = { error: "invalid_format" };
+    return res.json(store.lockerToOpen);
+  }
+  const tupcId = match[0];
+
   try {
+    //check if registered
     const [userRows] = await db.query("SELECT * FROM users WHERE tupcID = ?", [
-      textInput,
+      tupcId,
     ]);
     if (!userRows.length) {
       store.lockerToOpen = { error: "unregistered_user" };
@@ -25,16 +34,22 @@ router.post("/text-input", async (req, res) => {
 
     const [feeRow] = await db.query("SELECT fee FROM currentCharge LIMIT 1");
     const fee = feeRow.length ? parseFloat(feeRow[0].fee) : 5;
+
     //check balance format
     if (isNaN(balance)) {
-      store.lockerToOpen = { error: "invalid_balance_format" };
+      store.lockerToOpen = {
+        error: "invalid_balance_format",
+        balanceRem: balance,
+      };
       return res.json(store.lockerToOpen);
     }
+
     //check storing or retrieving
     const [existingSlot] = await db.query(
       "SELECT * FROM lockerSlot WHERE tupcID = ?",
-      [textInput]
+      [tupcId]
     );
+
     //retrieving
     if (existingSlot.length) {
       const lockerId = existingSlot[0].id;
@@ -45,17 +60,22 @@ router.post("/text-input", async (req, res) => {
       );
       await db.query(
         "INSERT INTO lockerHistory (tupcID, slotNumber, action) VALUES (?, ?, 'retrieved')",
-        [textInput, lockerId]
+        [tupcId, lockerId]
       );
 
-      store.lockerToOpen = { lockerToOpen: lockerId };
+      store.lockerToOpen = { lockerToOpen: lockerId, balanceRem: balance };
       return res.json(store.lockerToOpen);
     }
+
     //storing, check total balance
     if (balance < fee) {
-      store.lockerToOpen = { error: "insufficient_balance" };
+      store.lockerToOpen = {
+        error: "insufficient_balance",
+        balanceRem: balance,
+      };
       return res.json(store.lockerToOpen);
     }
+
     //check available slot
     const [available] = await db.query(`
       SELECT id FROM lockerSlot
@@ -66,14 +86,15 @@ router.post("/text-input", async (req, res) => {
     `);
 
     if (!available.length) {
-      store.lockerToOpen = { error: "no_available_slot" };
+      store.lockerToOpen = { error: "no_available_slot", balanceRem: balance };
       return res.json(store.lockerToOpen);
     }
+
     //stores updated lockerSlot and balance
     const lockerId = available[0].id;
     await db.query(
       "UPDATE lockerSlot SET tupcID = ?, status = 1, dateTime = NOW() WHERE id = ?",
-      [textInput, lockerId]
+      [tupcId, lockerId]
     );
     await db.query("UPDATE users SET balance = balance - ? WHERE id = ?", [
       fee,
@@ -81,9 +102,10 @@ router.post("/text-input", async (req, res) => {
     ]);
     await db.query(
       "INSERT INTO lockerHistory (tupcID, slotNumber, action) VALUES (?, ?, 'stored')",
-      [textInput, lockerId]
+      [tupcId, lockerId]
     );
-    store.lockerToOpen = { lockerToOpen: lockerId };
+
+    store.lockerToOpen = { lockerToOpen: lockerId, balanceRem: balance };
     return res.json(store.lockerToOpen);
   } catch (err) {
     console.error(err);

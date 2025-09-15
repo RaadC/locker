@@ -55,7 +55,7 @@ export default function UpdateTotalLockerPage() {
       (max, locker) => Math.max(max, locker.id),
       0
     );
-    if (number < 1) {
+    if (number < 10) {
       setMessage("Value must be at least 10");
       return;
     }
@@ -84,10 +84,10 @@ export default function UpdateTotalLockerPage() {
       <div className="fixed top-0 left-0 right-0 z-50">
         <TopBar onLogoClick={toggleSidebar} />
       </div>
-      <div className="flex flex-1 pt-16 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden">
         <Sidebar isOpen={sidebarOpen} />
-        <div className="flex flex-1 flex-col lg:flex-row gap-6 overflow-y-auto p-6 bg-gray-50">
-          <div className="w-full lg:w-1/2">
+        <div className="flex flex-1 flex-col lg:flex-row pt-25 gap-6 overflow-y-auto p-6 bg-gray-50">
+          <div className="w-full lg:w-1/3">
             <div className="bg-white shadow rounded-xl p-6 space-y-6">
               <h1 className="text-xl font-semibold">Adjust Total Slots</h1>
               <p className="text-sm text-gray-600">
@@ -124,7 +124,7 @@ export default function UpdateTotalLockerPage() {
             </div>
           </div>
 
-          <div className="w-full lg:w-1/2">
+          <div className="w-full lg:w-2/3">
             <div className="bg-white shadow rounded-xl p-6 space-y-7">
               <h2 className="text-xl font-semibold">Helmet Locker in use</h2>
 

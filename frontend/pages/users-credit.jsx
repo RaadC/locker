@@ -69,18 +69,18 @@ export default function UserCreditsPage() {
       <div className="fixed top-0 left-0 right-0 z-50">
         <TopBar onLogoClick={toggleSidebar} />
       </div>
-      <div className="flex flex-1 pt-16 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden">
         <Sidebar isOpen={sidebarOpen} />
-        <div className="flex flex-1 flex-col lg:flex-row gap-6 overflow-y-auto p-6 bg-gray-50">
-          <div className="w-full lg:w-1/2">
+        <div className="flex flex-1 flex-col lg:flex-row pt-25 gap-6 overflow-y-auto p-6 bg-gray-50">
+          <div className="w-full lg:w-1/3">
             <div className="bg-white shadow rounded-xl p-6 space-y-6">
-              <h1 className="text-2xl font-bold text-center">
+              <h1 className="text-2xl font-bold">
                 Add Users Credit
               </h1>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <input
                   type="text"
-                  placeholder="User TUPC ID"
+                  placeholder="TUPC ID"
                   value={tupcID}
                   onChange={(e) => setTupcID(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
@@ -116,7 +116,7 @@ export default function UserCreditsPage() {
             </div>
           </div>
 
-          <div className="w-full lg:w-1/2">
+          <div className="w-full lg:w-2/3">
             <div className="bg-white shadow rounded-xl p-6 space-y-7">
               <h2 className="text-xl font-semibold">Credit Load History</h2>
               {history.length > 0 ? (

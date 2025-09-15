@@ -87,12 +87,12 @@ export default function UpdateChargePage() {
       <div className="fixed top-0 left-0 right-0 z-50">
         <TopBar onLogoClick={toggleSidebar} />
       </div>
-      <div className="flex flex-1 pt-16 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden">
         <Sidebar isOpen={sidebarOpen} />
-        <main className="flex-1 flex justify-center items-start p-6 bg-gray-50">
+        <main className="flex-1 flex justify-center items-start pt-25 p-6 bg-gray-50">
           <div className="w-full max-w-md bg-white p-6 rounded-xl shadow-md space-y-6">
             <h1 className="text-xl font-semibold text-center">
-              Adjust Charge Fee
+              Adjust Charging Fee
             </h1>
             <p className="text-sm text-center text-gray-600">
               Current Charge: <strong>₱{currentValue}</strong>

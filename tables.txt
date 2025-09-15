@@ -1,7 +1,7 @@
 lockerSlot | CREATE TABLE `lockerslot` (
   `id` int NOT NULL AUTO_INCREMENT,
   `status` tinyint(1) DEFAULT NULL,
-  `tupcID` varchar(20) DEFAULT NULL,
+  `tupcID` varchar(100) DEFAULT NULL,
   `initial` tinyint(1) DEFAULT NULL,
   `dateTime` datetime DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
@@ -9,7 +9,7 @@ lockerSlot | CREATE TABLE `lockerslot` (
 
 users | CREATE TABLE `users` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `tupcID` varchar(20) NOT NULL,
+  `tupcID` varchar(100) NOT NULL,
   `balance` decimal(10,2) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `tupcID` (`tupcID`)
@@ -22,7 +22,7 @@ currentCharge | CREATE TABLE `currentcharge` (
 
 lockerHistory | CREATE TABLE `lockerhistory` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `tupcID` varchar(50) NOT NULL,
+  `tupcID` varchar(100) NOT NULL,
   `slotNumber` int NOT NULL,
   `action` varchar(20) NOT NULL,
   `dateTime` datetime DEFAULT CURRENT_TIMESTAMP,

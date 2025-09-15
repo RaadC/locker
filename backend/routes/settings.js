@@ -77,6 +77,10 @@ router.post("/insert-user", async (req, res) => {
       tupcID,
       balance,
     ]);
+    await db.query(
+      "INSERT INTO creditLoadHistory (tupcID, addedAmount) VALUES (?, ?)",
+      [tupcID, balance]
+    );
     return res.status(201).json({ message: "User inserted successfully." });
   } catch (err) {
     console.error("Error inserting user:", err);
@@ -104,20 +108,30 @@ router.delete("/delete-user/:tupcID", async (req, res) => {
 });
 router.put("/deactivate-locker/:id", async (req, res) => {
   const lockerId = req.params.id;
-
   try {
+    const [locker] = await db.query(
+      "SELECT tupcID FROM lockerSlot WHERE id = ?",
+      [lockerId]
+    );
+
+    if (locker.length === 0) {
+      return res.status(404).json({ message: "Locker not found." });
+    }
+    const tupcID = locker[0].tupcID;
     const [result] = await db.query(
       "UPDATE lockerSlot SET tupcID = NULL, status = 0 WHERE id = ?",
       [lockerId]
     );
 
     if (result.affectedRows === 0) {
-      return res
-        .status(404)
-        .json({ message: "Locker not found or already inactive." });
+      return res.status(404).json({ message: "Locker already inactive." });
     }
+    await db.query(
+      "INSERT INTO lockerHistory (tupcID, slotNumber, action, dateTime) VALUES (?, ?, ?, NOW())",
+      [tupcID, lockerId, "retrieved"]
+    );
 
-    res.json({ message: "Locker deactivated successfully." });
+    res.json({ message: "Locker deactivated and history recorded." });
   } catch (err) {
     console.error(err);
     res
@@ -125,6 +139,7 @@ router.put("/deactivate-locker/:id", async (req, res) => {
       .json({ message: "Database error while deactivating locker." });
   }
 });
+
 // PUT /api/add-credit
 router.put("/add-credits", async (req, res) => {
   const { tupcID, amount } = req.body;

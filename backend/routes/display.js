@@ -21,6 +21,18 @@ router.get("/display-total-charge", async (req, res) => {
   }
 });
 
+router.get("/all-lockers", async (req, res) => {
+  try {
+    const [rows] = await db.query(
+      "SELECT id, tupcID FROM lockerSlot WHERE id <= (SELECT total FROM totalLocker LIMIT 1) ORDER BY id ASC"
+    );
+    res.json(rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "server_error" });
+  }
+});
+
 router.get("/used-lockers", async (req, res) => {
   try {
     const [rows] = await db.query(
@@ -44,7 +56,9 @@ router.get("/users", async (req, res) => {
 });
 router.get("/load-history", async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM creditLoadHistory ORDER BY id DESC");
+    const [rows] = await db.query(
+      "SELECT * FROM creditLoadHistory ORDER BY id DESC"
+    );
     res.json(rows);
   } catch (err) {
     console.error(err);
@@ -53,7 +67,9 @@ router.get("/load-history", async (req, res) => {
 });
 router.get("/locker-history", async (req, res) => {
   try {
-    const [rows] = await db.query("SELECT * FROM lockerHistory ORDER BY id DESC");
+    const [rows] = await db.query(
+      "SELECT * FROM lockerHistory ORDER BY id DESC"
+    );
     res.json(rows);
   } catch (err) {
     console.error(err);

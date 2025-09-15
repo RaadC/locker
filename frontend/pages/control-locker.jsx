@@ -53,9 +53,9 @@ export default function ControlLockerPage() {
       <div className="fixed top-0 left-0 right-0 z-50">
         <TopBar onLogoClick={toggleSidebar} />
       </div>
-      <div className="flex flex-1 pt-16 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden">
         <Sidebar isOpen={sidebarOpen} />
-        <div className="flex-1 overflow-y-auto p-6 bg-gray-50">
+        <div className="flex-1 overflow-y-auto pt-25 p-6 bg-gray-50">
           <div className="w-full max-w-4xl mx-auto bg-white p-6 shadow rounded-xl">
             <h1 className="text-2xl font-bold mb-4">Helmet Locker in use</h1>
 

@@ -36,30 +36,39 @@ export default function RegisterUserPage() {
   }, [message]);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!tupcID || isNaN(balance)) {
-      setMessage("Invalid input");
-      return;
-    }
-    if (balance < 0) {
-      setMessage("Initial value cannot be negative.");
-      return;
-    }
-    try {
-      const response = await axios.post(
-        "http://localhost:5000/api/insert-user",
-        {
-          tupcID,
-          balance: parseFloat(balance),
-        }
-      );
-      setMessage(response.data.message || "User inserted successfully");
-      setTupcID("");
-      setBalance("");
-    } catch (error) {
-      setMessage("User ID already registered");
-    }
-  };
+  e.preventDefault();
+
+  // ✅ Enforce format: TUPC-XX-XXXX (always uppercase)
+  const idPattern = /^TUPC-\d{2}-\d{4}$/;
+  const formattedID = tupcID.toUpperCase().trim();
+
+  if (!idPattern.test(formattedID)) {
+    setMessage("Invalid TUPC ID format. Use TUPC-##-####");
+    return;
+  }
+
+  if (!formattedID || isNaN(balance)) {
+    setMessage("Invalid input");
+    return;
+  }
+  if (balance < 0) {
+    setMessage("Initial value cannot be negative.");
+    return;
+  }
+
+  try {
+    const response = await axios.post("http://localhost:5000/api/insert-user", {
+      tupcID: formattedID,
+      balance: parseFloat(balance),
+    });
+    setMessage(response.data.message || "User inserted successfully");
+    setTupcID("");
+    setBalance("");
+  } catch (error) {
+    setMessage("User ID already registered");
+  }
+};
+
 
   const handleDelete = async (tupcID) => {
     if (!confirm(`Are you sure you want to delete user ${tupcID}?`)) return;
@@ -81,10 +90,10 @@ export default function RegisterUserPage() {
       <div className="fixed top-0 left-0 right-0 z-50">
         <TopBar onLogoClick={toggleSidebar} />
       </div>
-      <div className="flex flex-1 pt-16 overflow-hidden">
+      <div className="flex flex-1 overflow-hidden">
         <Sidebar isOpen={sidebarOpen} />
-        <div className="flex flex-1 flex-col lg:flex-row gap-6 overflow-y-auto p-6 bg-gray-50">
-          <div className="w-full lg:w-1/2">
+        <div className="flex flex-1 flex-col lg:flex-row pt-25 gap-6 overflow-y-auto p-6 bg-gray-50">
+          <div className="w-full lg:w-1/3">
             <div className="bg-white shadow rounded-xl p-6 space-y-6">
               <h1 className="text-2xl font-bold mb-4">Register New User</h1>
               <form onSubmit={handleSubmit} className="space-y-4">
@@ -98,7 +107,7 @@ export default function RegisterUserPage() {
                 />
                 <input
                   type="number"
-                  placeholder="Balance"
+                  placeholder="Amount"
                   value={balance}
                   onChange={(e) => setBalance(e.target.value)}
                   className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
@@ -126,7 +135,7 @@ export default function RegisterUserPage() {
             </div>
           </div>
 
-          <div className="w-full lg:w-1/2">
+          <div className="w-full lg:w-2/3">
             <div className="bg-white shadow rounded-xl p-6 space-y-7">
               <h2 className="text-xl font-semibold">All registered users</h2>
               <div className="flex justify-end mb-3">
