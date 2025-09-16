@@ -149,9 +149,9 @@ export default function LockerHistoryPage() {
                       className="bg-white hover:bg-gray-50 border-b"
                     >
                       <td className="px-4 py-2">{item.id}</td>
-                      <td className="px-4 py-2">{item.tupcID}</td>
+                      <td className="px-4 py-2 uppercase">{item.tupcID}</td>
                       <td className="px-4 py-2">{item.slotNumber}</td>
-                      <td className="px-4 py-2">{item.action}</td>
+                      <td className="px-4 py-2 uppercase">{item.action}</td>
                       <td className="px-4 py-2">
                         {new Date(item.dateTime).toLocaleString()}
                       </td>

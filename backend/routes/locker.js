@@ -130,4 +130,33 @@ router.get("/locker-number", (req, res) => {
   }
 });
 
+// POST: /api/check-balance
+router.post("/check-balance", async (req, res) => {
+  let { textInput } = req.body;
+  if (!textInput) {
+    return res.status(400).json({ error: "no_input_provided" });
+  }
+
+  // Extract just the ID part (TUPC-XX-XXXX)
+  const match = textInput.match(/TUPC-\d{2}-\d{4}/i);
+  if (!match) {
+    return res.json({ error: "invalid_format" });
+  }
+  const tupcId = match[0];
+
+  try {
+    const [rows] = await db.query("SELECT balance FROM users WHERE tupcID = ?", [tupcId]);
+
+    if (!rows.length) {
+      return res.json({ message: "record_unavailable" });
+    }
+
+    const balance = parseFloat(rows[0].balance) || 0;
+    return res.json({ balanceRem: balance });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "server_error" });
+  }
+});
+
 module.exports = router;

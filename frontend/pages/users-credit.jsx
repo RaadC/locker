@@ -145,8 +145,8 @@ export default function UserCreditsPage() {
                           className="bg-white hover:bg-gray-50 shadow-sm border-b border-gray-200"
                         >
                           <td className="px-4 py-2">{entry.id}</td>
-                          <td className="px-4 py-2">{entry.tupcID}</td>
-                          <td className="px-4 py-2">{entry.addedAmount}</td>
+                          <td className="px-4 py-2 uppercase">{entry.tupcID}</td>
+                          <td className="px-4 py-2">₱{entry.addedAmount}</td>
                           <td className="px-4 py-2">
                             {formatDate(entry.dateTime)}
                           </td>

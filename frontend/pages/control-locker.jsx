@@ -79,7 +79,7 @@ export default function ControlLockerPage() {
                         className="border-b bg-white hover:bg-gray-50"
                       >
                         <td className="px-4 py-2">{entry.id}</td>
-                        <td className="px-4 py-2">{entry.tupcID}</td>
+                        <td className="px-4 py-2 uppercase">{entry.tupcID}</td>
                         <td className="px-4 py-2">
                           {formatDate(entry.dateTime)}
                         </td>

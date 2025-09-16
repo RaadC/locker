@@ -148,7 +148,7 @@ export default function UpdateTotalLockerPage() {
                           className="bg-white hover:bg-gray-50 shadow-sm border-b border-gray-200"
                         >
                           <td className="px-4 py-2">{locker.id}</td>
-                          <td className="px-4 py-2">{locker.tupcID}</td>
+                          <td className="px-4 py-2 uppercase">{locker.tupcID}</td>
                         </tr>
                       ))}
                     </tbody>
