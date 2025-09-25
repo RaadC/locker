@@ -36,39 +36,45 @@ export default function RegisterUserPage() {
   }, [message]);
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  // ✅ Enforce format: TUPC-XX-XXXX (always uppercase)
-  const idPattern = /^TUPC-\d{2}-\d{4}$/;
-  const formattedID = tupcID.toUpperCase().trim();
+    //Enforce format: TUPC-XX-XXX
+    const idPattern = /^TUPC-\d{2}-\d{4}$/;
+    const formattedID = tupcID.toUpperCase().trim();
 
-  if (!idPattern.test(formattedID)) {
-    setMessage("Invalid TUPC ID format. Use TUPC-##-####");
-    return;
-  }
+    if (!idPattern.test(formattedID)) {
+      setMessage("Invalid TUPC ID format. Use TUPC-##-####");
+      return;
+    }
 
-  if (!formattedID || isNaN(balance)) {
-    setMessage("Invalid input");
-    return;
-  }
-  if (balance < 0) {
-    setMessage("Initial value cannot be negative.");
-    return;
-  }
+    if (!formattedID || isNaN(balance)) {
+      setMessage("Invalid input");
+      return;
+    }
+    if (balance < 0) {
+      setMessage("Initial value cannot be negative.");
+      return;
+    }
+    if (balance <= 9) {
+      setMessage("Initial value cannot be lower than 10");
+      return;
+    }
 
-  try {
-    const response = await axios.post("http://localhost:5000/api/insert-user", {
-      tupcID: formattedID,
-      balance: parseFloat(balance),
-    });
-    setMessage(response.data.message || "User inserted successfully");
-    setTupcID("");
-    setBalance("");
-  } catch (error) {
-    setMessage("User ID already registered");
-  }
-};
-
+    try {
+      const response = await axios.post(
+        "http://localhost:5000/api/insert-user",
+        {
+          tupcID: formattedID,
+          balance: parseFloat(balance),
+        }
+      );
+      setMessage(response.data.message || "User inserted successfully");
+      setTupcID("");
+      setBalance("");
+    } catch (error) {
+      setMessage("User ID already registered");
+    }
+  };
 
   const handleDelete = async (tupcID) => {
     if (!confirm(`Are you sure you want to delete user ${tupcID}?`)) return;
@@ -197,7 +203,7 @@ export default function RegisterUserPage() {
               <HelpCircle className="w-6 h-6" />
             </div>
             <div className="absolute bottom-14 right-0 w-72 text-sm text-white bg-gray-900 p-3 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none z-50 shadow-lg">
-              To "Register" user enter TUPC ID and initial balance. This page
+              To "Register" a user, enter the TUPC ID and initial balance. This page
               also shows all users
             </div>
           </div>

@@ -14,7 +14,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchLockers = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/all-lockers"); 
+        const res = await fetch("http://localhost:5000/api/all-lockers");
         const data = await res.json();
         setLockers(data);
       } catch (err) {
@@ -23,10 +23,9 @@ export default function DashboardPage() {
     };
 
     fetchLockers();
-    const interval = setInterval(fetchLockers, 5000); 
+    const interval = setInterval(fetchLockers, 5000);
     return () => clearInterval(interval);
   }, []);
-
 
   const columns = [];
   for (let i = 0; i < lockers.length; i += 5) {
@@ -44,12 +43,9 @@ export default function DashboardPage() {
 
       <div className="flex flex-1 overflow-hidden">
         <Sidebar isOpen={sidebarOpen} />
-
-        {/* Main Content */}
         <div className="flex-1 pt-25 p-6 overflow-y-auto bg-gray-50">
           <div className="bg-white shadow rounded-xl p-6">
             <div className="flex flex-col md:flex-row gap-6">
-              {/* LEFT*/}
               <div className="flex flex-col items-center justify-center gap-6 md:w-1/4">
                 <div className="text-center bg-gray-50 p-4 rounded-lg shadow w-40">
                   <p className="text-2xl font-bold text-green-600">
@@ -70,8 +66,6 @@ export default function DashboardPage() {
                   <p className="text-gray-600 text-sm">Total Lockers</p>
                 </div>
               </div>
-
-              {/* RIGHT*/}
               <div className="flex-1 flex justify-center">
                 <div className="flex gap-6 p-6 flex-wrap md:flex-nowrap">
                   {columns.map((col, colIndex) => (
@@ -93,7 +87,7 @@ export default function DashboardPage() {
                           }}
                         >
                           {locker.tupcID && (
-                            <div className="absolute inset-0 bg-white/50"></div> 
+                            <div className="absolute inset-0 bg-white/50"></div>
                           )}
                           <span className="absolute top-1 right-2 text-xs font-bold text-gray-700">
                             {locker.id}
@@ -111,8 +105,6 @@ export default function DashboardPage() {
               </div>
             </div>
           </div>
-
-
           <div className="fixed bottom-4 right-4 group z-50">
             <div className="bg-white text-blue-600 rounded-full w-12 h-12 flex items-center justify-center cursor-pointer shadow-lg hover:bg-gray-100 transition duration-200">
               <HelpCircle className="w-6 h-6" />

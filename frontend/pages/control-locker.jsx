@@ -10,6 +10,7 @@ export default function ControlLockerPage() {
   const [usedLocker, setUsedLocker] = useState([]);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
+  const [isSuccess, setIsSuccess] = useState(null);
 
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
@@ -24,23 +25,46 @@ export default function ControlLockerPage() {
       }
     };
     fetchUsedLocker();
-    const interval = setInterval(fetchUsedLocker, 5000); // auto-refresh
+    const interval = setInterval(fetchUsedLocker, 5000);
     return () => clearInterval(interval);
   }, []);
 
-  const handleDeactivate = async (id) => {
-    if (!confirm(`Are you sure you  want to open locker #${id}?`)) return;
+  useEffect(() => {
+    if (message) {
+      const timer = setTimeout(() => {
+        setMessage("");
+        setIsSuccess(null);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+
+  const handleDeactivate = async (tupcID) => {
+    if (!confirm(`Are you sure you want to open locker for ${tupcID}?`)) return;
     try {
-      const res = await axios.put(
-        `http://localhost:5000/api/deactivate-locker/${id}`
-      );
-      setMessage(res.data.message);
-      setData((prev) => prev.filter((row) => row.id !== id));
+      // Post to text-input endpoint
+      const res = await axios.post("http://localhost:5000/api/text-input", {
+        textInput: tupcID,
+      });
+
+      if (res.data.lockerToOpen) {
+        setMessage(
+          `Locker #${res.data.lockerToOpen} opened. Balance: ₱${res.data.balanceRem}`
+        );
+        setIsSuccess(true);
+        setUsedLocker((prev) => prev.filter((row) => row.tupcID !== tupcID));
+      } else {
+        setMessage(res.data.error || "Failed to open locker.");
+        setIsSuccess(false);
+      }
     } catch (err) {
+      console.error("Deactivate failed", err);
       setMessage("Failed to deactivate locker.");
+      setIsSuccess(false);
     }
   };
-    const formatDate = (dateStr) => {
+
+  const formatDate = (dateStr) => {
     const date = new Date(dateStr);
     return date.toLocaleString("en-PH", {
       dateStyle: "medium",
@@ -57,7 +81,7 @@ export default function ControlLockerPage() {
         <Sidebar isOpen={sidebarOpen} />
         <div className="flex-1 overflow-y-auto pt-25 p-6 bg-gray-50">
           <div className="w-full max-w-4xl mx-auto bg-white p-6 shadow rounded-xl">
-            <h1 className="text-2xl font-bold mb-4">Helmet Locker in use</h1>
+            <h1 className="text-2xl font-bold mb-4">Helmet Locker in Use</h1>
 
             {error && <p className="text-red-500">{error}</p>}
 
@@ -85,7 +109,7 @@ export default function ControlLockerPage() {
                         </td>
                         <td className="px-4 py-2">
                           <button
-                            onClick={() => handleDeactivate(entry.id)}
+                            onClick={() => handleDeactivate(entry.tupcID)}
                             className="flex items-center gap-2 text-red-600 hover:text-red-700"
                           >
                             <Unlock size={16} />
@@ -95,7 +119,7 @@ export default function ControlLockerPage() {
                     ))
                   ) : (
                     <tr>
-                      <td colSpan="3" className="py-4 text-gray-500">
+                      <td colSpan="4" className="py-4 text-gray-500">
                         No lockers found.
                       </td>
                     </tr>
@@ -104,14 +128,27 @@ export default function ControlLockerPage() {
               </table>
             </div>
           </div>
+          {message && (
+            <div
+              className={`fixed top-6 right-6 z-50 px-4 py-2 rounded shadow-lg transition-opacity duration-300 text-sm
+                ${
+                  isSuccess
+                    ? "bg-green-500 text-white"
+                    : "bg-red-500 text-white"
+                }`}
+            >
+              {message}
+            </div>
+          )}
+
           <div className="fixed bottom-4 right-4 group z-50">
             <div className="bg-white text-blue-600 rounded-full w-12 h-12 flex items-center justify-center cursor-pointer shadow-lg hover:bg-gray-100 transition duration-200">
               <HelpCircle className="w-6 h-6" />
             </div>
             <div className="absolute bottom-14 right-0 w-72 text-sm text-white bg-gray-900 p-3 rounded-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none shadow-lg">
-              This page shows the locker in use. This page will allow you to
-              forcely unlock the locker in use when QR code of user is not
-              available during retrieval
+              This page shows the lockers currently in use. You can forcibly
+              unlock a locker if the user's QR code is not available during
+              retrieval.
             </div>
           </div>
         </div>

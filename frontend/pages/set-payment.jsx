@@ -11,7 +11,7 @@ export default function UpdateChargePage() {
   const [currentCharge, setCurrentCharge] = useState("");
   const [currentValue, setCurrentValue] = useState(null);
   const [message, setMessage] = useState("");
-  const [isSuccess, setIsSuccess] = useState(null); 
+  const [isSuccess, setIsSuccess] = useState(null);
 
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 

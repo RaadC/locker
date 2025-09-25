@@ -15,7 +15,6 @@ export default function UpdateTotalLockerPage() {
 
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
-  //Fetch totalLocker
   useEffect(() => {
     axios
       .get("http://localhost:5000/api/display-total-charge")
@@ -26,7 +25,6 @@ export default function UpdateTotalLockerPage() {
       .catch(() => setMessage("Failed to load total locker"));
   }, []);
 
-  //Fetch active lockers
   useEffect(() => {
     const fetchActiveLockers = () => {
       axios
@@ -56,6 +54,7 @@ export default function UpdateTotalLockerPage() {
       0
     );
     if (number < 10) {
+      //initial or fixed num of locker
       setMessage("Value must be at least 10");
       return;
     }
@@ -148,7 +147,9 @@ export default function UpdateTotalLockerPage() {
                           className="bg-white hover:bg-gray-50 shadow-sm border-b border-gray-200"
                         >
                           <td className="px-4 py-2">{locker.id}</td>
-                          <td className="px-4 py-2 uppercase">{locker.tupcID}</td>
+                          <td className="px-4 py-2 uppercase">
+                            {locker.tupcID}
+                          </td>
                         </tr>
                       ))}
                     </tbody>

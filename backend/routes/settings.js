@@ -106,39 +106,6 @@ router.delete("/delete-user/:tupcID", async (req, res) => {
     res.status(500).json({ message: "Failed to delete user." });
   }
 });
-router.put("/deactivate-locker/:id", async (req, res) => {
-  const lockerId = req.params.id;
-  try {
-    const [locker] = await db.query(
-      "SELECT tupcID FROM lockerSlot WHERE id = ?",
-      [lockerId]
-    );
-
-    if (locker.length === 0) {
-      return res.status(404).json({ message: "Locker not found." });
-    }
-    const tupcID = locker[0].tupcID;
-    const [result] = await db.query(
-      "UPDATE lockerSlot SET tupcID = NULL, status = 0 WHERE id = ?",
-      [lockerId]
-    );
-
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: "Locker already inactive." });
-    }
-    await db.query(
-      "INSERT INTO lockerHistory (tupcID, slotNumber, action, dateTime) VALUES (?, ?, ?, NOW())",
-      [tupcID, lockerId, "retrieved"]
-    );
-
-    res.json({ message: "Locker deactivated and history recorded." });
-  } catch (err) {
-    console.error(err);
-    res
-      .status(500)
-      .json({ message: "Database error while deactivating locker." });
-  }
-});
 
 // PUT /api/add-credit
 router.put("/add-credits", async (req, res) => {

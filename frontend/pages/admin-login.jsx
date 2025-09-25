@@ -26,11 +26,24 @@ export default function AdminLoginPage() {
       });
 
       const data = await res.json();
+
       if (res.ok) {
+        // save token in cookies
         Cookies.set("token", data.token, { expires: 1 });
         console.log("Token stored:", data.token);
+
         setMessage("Login success, loading...");
-        setTimeout(() => router.push("/dashboard"), 800);
+
+        //redirect based on role
+        setTimeout(() => {
+          if (data.role === 0) {
+            router.push("/account-control");
+          } else if (data.role === 1) {
+            router.push("/dashboard");
+          } else {
+            router.push("/admin-login");
+          }
+        }, 800);
       } else {
         setMessage(data.message || "Login failed");
       }
@@ -41,7 +54,6 @@ export default function AdminLoginPage() {
 
   return (
     <div className="min-h-screen flex flex-col md:flex-row">
-      {/* LEFT SIDE */}
       <div className="flex flex-col items-center justify-center flex-1 p-8 bg-gradient-to-br from-blue-950 via-blue-900 to-blue-400 text-gray-50">
         <img
           src="/logo.png"
@@ -53,8 +65,6 @@ export default function AdminLoginPage() {
           Secure and reliable locker management system for helmets.
         </p>
       </div>
-
-      {/* RIGHT SIDE */}
       <div className="flex flex-1 items-center justify-center p-8 bg-gray-50">
         <form
           onSubmit={handleLogin}

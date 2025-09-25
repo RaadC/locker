@@ -3,21 +3,19 @@
 import { useEffect, useState } from "react";
 import TopBar from "@/components/TopBar";
 import Sidebar from "@/components/Sidebar";
-import { HelpCircle, Printer } from "lucide-react";
+import { HelpCircle, FileDown } from "lucide-react";
 
-// Utility: Convert array of objects to CSV string
 const convertToCSV = (data) => {
   if (!data || data.length === 0) return "";
   const headers = Object.keys(data[0]).join(",");
   const rows = data.map((row) =>
     Object.values(row)
-      .map((value) => `"${value}"`) // wrap in quotes
+      .map((value) => `"${value}"`)
       .join(",")
   );
   return [headers, ...rows].join("\n");
 };
 
-// Trigger CSV download
 const downloadCSV = (data) => {
   const csv = convertToCSV(data);
   const blob = new Blob([csv], { type: "text/csv;charset=utf-8;" });
@@ -63,7 +61,10 @@ export default function LockerHistoryPage() {
       new Date(item.dateTime).toISOString().slice(0, 10) === dateFilter;
     const matchesLockerId =
       !idFilter ||
-      item.slotNumber?.toString().toLowerCase().includes(idFilter.toLowerCase());
+      item.slotNumber
+        ?.toString()
+        .toLowerCase()
+        .includes(idFilter.toLowerCase());
 
     return matchesAction && matchesDate && matchesLockerId;
   });
@@ -86,7 +87,7 @@ export default function LockerHistoryPage() {
                 className="p-2 rounded-full text-blue-600 hover:bg-gray-100 transition"
                 title="Export as CSV"
               >
-                <Printer className="w-6 h-6" />
+                <FileDown className="w-6 h-6" />
               </button>
             </div>
 

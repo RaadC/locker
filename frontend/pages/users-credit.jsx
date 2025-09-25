@@ -74,9 +74,7 @@ export default function UserCreditsPage() {
         <div className="flex flex-1 flex-col lg:flex-row pt-25 gap-6 overflow-y-auto p-6 bg-gray-50">
           <div className="w-full lg:w-1/3">
             <div className="bg-white shadow rounded-xl p-6 space-y-6">
-              <h1 className="text-2xl font-bold">
-                Add Users Credit
-              </h1>
+              <h1 className="text-2xl font-bold">Add Users Credit</h1>
               <form onSubmit={handleSubmit} className="space-y-4">
                 <input
                   type="text"
@@ -145,7 +143,9 @@ export default function UserCreditsPage() {
                           className="bg-white hover:bg-gray-50 shadow-sm border-b border-gray-200"
                         >
                           <td className="px-4 py-2">{entry.id}</td>
-                          <td className="px-4 py-2 uppercase">{entry.tupcID}</td>
+                          <td className="px-4 py-2 uppercase">
+                            {entry.tupcID}
+                          </td>
                           <td className="px-4 py-2">₱{entry.addedAmount}</td>
                           <td className="px-4 py-2">
                             {formatDate(entry.dateTime)}
