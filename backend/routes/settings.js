@@ -15,7 +15,7 @@ router.put("/settings", async (req, res) => {
       const maxLockerId = maxId || 0;
 
       if (totalLocker >= maxLockerId) {
-        const [result] = await db.query("UPDATE totalLocker SET total = ?", [
+        const [result] = await db.query("UPDATE totalLocker SET total = ? WHERE id = 1", [
           totalLocker,
         ]);
 
@@ -47,7 +47,7 @@ router.put("/settings", async (req, res) => {
     }
 
     if (typeof currentCharge === "number") {
-      await db.query("UPDATE currentCharge SET fee = ?", [currentCharge]);
+      await db.query("UPDATE currentCharge SET fee = ? WHERE id = 1", [currentCharge]);
     }
 
     res.json({ success: true });

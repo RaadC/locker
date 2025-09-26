@@ -6,7 +6,7 @@ import RPi.GPIO as GPIO
 import tkinter as tk
 
 # === CONFIG ===
-SERVER_URL = "http://192.168.1.7:5000"  
+SERVER_URL = "http://192.168.1.10:5000"  
 s0, s1, s2, s3 = 5, 6, 12, 13
 en = 16
 
@@ -20,17 +20,12 @@ input_queue = queue.Queue()
 
 
 def select_channel(ch):
-    """Set s0..s3 to binary of ch (0-indexed channel)."""
     GPIO.output(s0, ch & 0x01)
     GPIO.output(s1, (ch >> 1) & 0x01)
     GPIO.output(s2, (ch >> 2) & 0x01)
     GPIO.output(s3, (ch >> 3) & 0x01)
 
 def activate_channel(channel_num):
-    """
-    Activate the relay for given locker channel number (1..16).
-    This only toggles GPIO — logging should be done by caller (UI thread).
-    """
     if not (1 <= channel_num <= 16):
         raise ValueError("Invalid channel number")
 
@@ -45,26 +40,23 @@ def activate_channel(channel_num):
     GPIO.output(en, GPIO.HIGH)
 
 def send_text_input(user_input):
-    """POST scanned/typed ID to backend (/api/text-input)."""
     try:
-        requests.post(f"{SERVER_URL}/api/text-input", json={"textInput": user_input}, timeout=5)
+        requests.post(f"{SERVER_URL}/api/locker/text-input", json={"textInput": user_input}, timeout=5)
         return True
     except Exception as e:
         return {"error": str(e)}
 
 def get_locker_response():
-    """GET current locker-number assignment from backend (/api/locker-number)."""
     try:
-        res = requests.get(f"{SERVER_URL}/api/locker-number", timeout=5)
+        res = requests.get(f"{SERVER_URL}/api/locker/locker-number", timeout=5)
     
         return res.json()
     except Exception:
         return {}
 
 def check_balance_request(user_input):
-    """POST to /check-balance endpoint (returns JSON)."""
     try:
-        res = requests.post(f"{SERVER_URL}/check-balance", json={"textInput": user_input}, timeout=5)
+        res = requests.post(f"{SERVER_URL}/api/locker/check-balance", json={"textInput": user_input}, timeout=5)
         return res.json()
     except Exception:
         return {"error": "server_error"}
@@ -97,7 +89,6 @@ class MainPage(tk.Frame):
         self.response_label.pack(pady=20)
 
     def log_message(self, msg):
-        """Set popup message (clears after 2s)."""
         self.response_label.config(text=msg)
         self.after(2000, lambda: self.response_label.config(text=""))
 
